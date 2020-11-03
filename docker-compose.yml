@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+#  app:
+#    image: golang:1.13
+#    restart: always
+#    ports:
+#      - 8314:8314
+#    volumes:
+#      - .:/app
+#      - $GOPATH/pkg/mod:/go/pkg/mod
+#    working_dir: /app
+#    command: bash -c "go run ./cmd"
+#    env_file:
+#      - .env
+  app:
+    restart: always
+    image: screening_v2
+    ports:
+      - 8314:8314
+    depends_on:
+      - mysql
+    env_file:
+      - .env
+
+  mysql:
+    image: mysql:8.0
+    restart: always
+    ports:
+      - 3306:3306
+#    volumes:
+#      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      MYSQL_DATABASE: screening
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    healthcheck:
+      test: "/usr/bin/mysql --database=screening --execute \"SELECT * FROM users;\""
+      interval: 10s
+      timeout: 3s
+      retries: 10
